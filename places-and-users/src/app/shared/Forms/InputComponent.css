@@ -1,0 +1,16 @@
+.form-styles {
+  color: #333;
+}
+
+.error-form-styles {
+  color: red;
+}
+
+.error-form-styles textarea,
+.error-form-styles input {
+  background-color: rgb(241, 149, 149);
+}
+
+.error {
+  font-size: small;
+}

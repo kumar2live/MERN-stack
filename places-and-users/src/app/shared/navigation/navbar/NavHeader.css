@@ -1,0 +1,16 @@
+.active {
+  color: white;
+}
+
+.active :hover {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+a {
+  color: #c5f1e2;
+}

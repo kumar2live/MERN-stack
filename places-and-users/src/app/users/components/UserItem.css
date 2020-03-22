@@ -1,0 +1,10 @@
+.imageStyles {
+  height: 100px;
+  width: 100px;
+}
+
+.user-item {
+  cursor: pointer;
+  text-decoration: none;
+  color: #333;
+}

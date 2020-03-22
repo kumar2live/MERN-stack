@@ -1,0 +1,15 @@
+.imageStyles {
+  height: 150px;
+  width: 150px;
+}
+
+.place-item {
+  cursor: pointer;
+  text-decoration: none;
+  color: #333;
+}
+
+.image-container {
+  height: 10rem;
+  width: 100%;
+}
