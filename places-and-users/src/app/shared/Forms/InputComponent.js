@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect, useState } from 'react';
+import React, { useReducer, useEffect } from 'react';
 
 import {validate} from '../../utils/validators';
 import './InputComponent.css';
@@ -25,7 +25,7 @@ const inputReducer = (state, action) => {
 const InputComponent = (props) => {
   const [reducerState, dispatch] = useReducer(
     inputReducer, {
-      payload: undefined, isValid: false, isTouched: false,
+      value: props.initialValue || '', isValid: props.initialValidity || false, isTouched: false,
     });
 
   const {id, onInput} = props;

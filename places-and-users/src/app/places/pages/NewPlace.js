@@ -1,54 +1,19 @@
-import React, { useCallback, useReducer } from 'react';
+import React from 'react';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 
 import {VALIDATOR_REQUIRE, VALIDATOR_MINLENGTH} from '../../utils/validators';
 import InputComponent from '../../shared/Forms/InputComponent';
+import { useAppFormHook } from '../../app-hooks/appform-hook';
 
-const formReducer = (state, action) => {
-  switch (action.type) {
-    case 'INPUT_CHANGE':
-      let isFormValid = true;
-      for (const input in state.inputs) {
-        if (input === action.inputId) {
-          isFormValid = isFormValid && action.isValid;
-        } else {
-          isFormValid = isFormValid && state.inputs[input].isValid;
-        }
-      }
-      return {
-        ...state,
-        inputs: {
-          ...state.inputs,
-          [action.inputId]: {value: action.value, isValid: action.isValid},
-        },
-        isValid: isFormValid,
-      }
-  
-    default:
-      return state;
-  }
-}
-
-const NewPlace = (props) => {
-  const [formState, dispatch] = useReducer(
-    formReducer, {
-      inputs: {
-        title: {value: '', isValid: false},
-        description: {value: '', isValid: false},
-      },
-      isValid: false,
-    });
-
-  const inputChangeHandler = useCallback((id, value, isValid) => {
-    // console.log('id, value, isValid -- ', id, value, isValid);
-    dispatch({
-      type: 'INPUT_CHANGE',
-      value: value,
-      inputId: id,
-      isValid: isValid,
-    });
-  }, [dispatch]);
+const NewPlace = () => {
+  const [formState, inputChangeHandler] = useAppFormHook(
+    {
+      title: {value: '', isValid: false},
+      description: {value: '', isValid: false},
+      address: {value: '', isValid: false},
+    }, false,
+  );
 
   const placeSubmitHandler = event => {
     event.preventDefault();
@@ -89,7 +54,7 @@ const NewPlace = (props) => {
                 onInput={inputChangeHandler}
               />
               
-              <Button className='my-2' variant="success" type='submit' disabled={!formState.isValid}>Add</Button>
+              <Button className='my-2' variant="success" type='submit' disabled={!formState.isValid}>Add Place</Button>
             </form>
           </Card.Body>
         </Card>
