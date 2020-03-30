@@ -1,5 +1,9 @@
-const HttpError = require('../models/http-error');
 const uuid = require('uuid/v4');
+const { check, validationResult } = require('express-validator');
+
+const getCoordsForAddress = require('../utils/location');
+
+const HttpError = require('../models/http-error');
 
 let testPlaces = [
   {
@@ -41,23 +45,34 @@ const getPlacesByUserId = (req, res, next) => {
   const places = testPlaces.filter((tp) => tp.creator === userId);
 
   if (!places || places.length === 0) {
-    // res.status(404).json({message: 'Could not find a place for provided User ID'});
-    // return;
     return next(
-      new HttpError('Could not find a places for provided User ID', 404)
+      new HttpError('Could not find a places for provided User ID', 404),
     );
   } 
 
   res.json({message: 'It works in places!', places});
 }
 
-const createPlace = (req, res, next) => {
+const createPlace = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log(errors);
+    return next(new HttpError('Invalid Inputs Password, Please check', 422));
+  }
   const { title, description, address, creator } = req.body;
+  let coordinates;
+
+  try {
+    coordinates = await getCoordsForAddress({})
+  } catch (error) {
+    return next(error);
+  }
 
   const createdPlace = {
     id: uuid(),
     title,
     description,
+    location: coordinates,
     address,
     creator,
   };
@@ -67,6 +82,11 @@ const createPlace = (req, res, next) => {
 }
 
 const updatePlaceById = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log(errors);
+    throw new HttpError('Invalid Inputs Password, Please check', 422)
+  }
   const { title, description } = req.body;
   const placeId = req.params.pid;
   
@@ -82,6 +102,9 @@ const updatePlaceById = (req, res, next) => {
 
 const deletePlaceById = (req, res, next) => {
   const placeId = req.params.pid;
+  if (! testPlaces.find(tp => tp.id === placeId) ) {
+    throw new HttpError('No such Place found.', 404);
+  }
   testPlaces = testPlaces.filter(p => p.id !== placeId);
 
   res.status(200).json({places: testPlaces});
