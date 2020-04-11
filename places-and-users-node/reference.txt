@@ -1,0 +1,5 @@
+node js mongodb:
+http://mongodb.github.io/node-mongodb-native/3.4/quick-start/quick-start/
+
+mongoose:
+https://mongoosejs.com/docs/documents.html

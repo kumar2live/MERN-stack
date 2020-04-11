@@ -1,56 +1,71 @@
-const uuid = require('uuid/v4');
-const { check, validationResult } = require('express-validator');
+const { validationResult } = require('express-validator');
+const Place = require('../mongo/models/place');
+const User = require('../mongo/models/user');
+const mongoose = require('mongoose');
 
 const getCoordsForAddress = require('../utils/location');
 
 const HttpError = require('../models/http-error');
 
-let testPlaces = [
-  {
-    id: 'p1',
-    title: 'Testing Place 1',
-    description: 'One of the testing place 1',
-    address: 'Testing address 1',
-    creator: 'u1',
-  },
-  {
-    id: 'p2',
-    title: 'Testing Place 2',
-    description: 'One of the testing place 2',
-    address: 'Testing address 2',
-    creator: 'u2',
-  },
-  {
-    id: 'p3',
-    title: 'Testing Place 3',
-    description: 'One of the testing place 3',
-    address: 'Testing address 3',
-    creator: 'u2',
+const getAllPlaces = async (req, res, next) => {
+  let places;
+
+  try {
+    places = await Place.find();  
+  } catch (error) {
+    const getError = new HttpError('Could not find a place due to tech error', 404);
+    return next(getError);
   }
-];
-
-const getPlaceById = (req, res, next) => {
-  const placeId = req.params.pid;
-  const place = testPlaces.find((tp) => tp.id === placeId);
-
-  if (!place) {
-    throw new HttpError('Could not find a place for given ID', 404);
-  } 
-
-  res.json({message: 'It works in places!', place});
-}
-
-const getPlacesByUserId = (req, res, next) => {
-  const userId = req.params.uid;
-  const places = testPlaces.filter((tp) => tp.creator === userId);
 
   if (!places || places.length === 0) {
+    return next(
+      new HttpError('Could not any places!', 404),
+    );
+  } 
+
+  res.json({places: places.map((place) => place.toObject({getters: true}))});
+}
+
+const getPlaceById = async (req, res, next) => {
+  const placeId = req.params.pid;
+  let place;
+
+  try {
+    place = await Place.findById(placeId);  
+  } catch (error) {
+    const getError = new HttpError('Could not find a place for given ID', 404);
+    return next(getError);
+  }
+
+  if (!place) {
+    const placeError = new HttpError('Could not find a place for given ID', 404);
+    return next(placeError);
+  } 
+
+  res.json({place: place.toObject({getters: true})});
+}
+
+const getPlacesByUserId = async (req, res, next) => {
+  const userId = req.params.uid;
+  let places;
+  let userWithPlaces;
+  try {
+    console.log('userId -- ', userId);
+    // places = await Place.find({creator: userId});  
+    userWithPlaces = await User.findById(userId).populate('places');
+  } catch (error) {
+    const getError = new HttpError('Could not find a place for given User ID', 404);
+    return next(getError);
+  }
+  console.log('userWithPlaces -- ', userWithPlaces);
+
+  if (!userWithPlaces || userWithPlaces.length === 0) {
     return next(
       new HttpError('Could not find a places for provided User ID', 404),
     );
   } 
 
-  res.json({message: 'It works in places!', places});
+  res.json({places: userWithPlaces.places.map((place) => place.toObject({getters: true}))});
 }
 
 const createPlace = async (req, res, next) => {
@@ -68,51 +83,105 @@ const createPlace = async (req, res, next) => {
     return next(error);
   }
 
-  const createdPlace = {
-    id: uuid(),
+  const createdPlace = new Place({
     title,
     description,
-    location: coordinates,
+    image: 'https://images.pexels.com/photos/3801030/pexels-photo-3801030.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500',
     address,
+    location: coordinates,
     creator,
-  };
-  testPlaces.push(createdPlace);
+  });
+
+  // console.log('creator -- ', creator);
+  let user;
+  try {
+    user = await User.findById(creator);
+  } catch (error) {
+    return next(new HttpError('Error in finding the user, Please try again', 500));
+  }
+
+  if(!user) {
+    return next(new HttpError('Could not find user, Please try again', 500));
+  }
+
+  try {
+    // await createdPlace.save();
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await createdPlace.save({ session: sess });
+    user.places.push(createdPlace);
+    await user.save({ session: sess });
+    await sess.commitTransaction();
+  } catch (error) {
+    const throwError = new HttpError('Creating Place Failed, Please try again', 500);
+    return next(throwError);
+  }
 
   res.status(201).json({place: createdPlace});
 }
 
-const updatePlaceById = (req, res, next) => {
+const updatePlaceById = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log(errors);
-    throw new HttpError('Invalid Inputs Password, Please check', 422)
+    return next(new HttpError('Invalid Inputs Password, Please check', 422));
   }
   const { title, description } = req.body;
   const placeId = req.params.pid;
   
-  const updatedPlace = { ...testPlaces.find(tp => tp.id === placeId) };
-  const placeIndex = testPlaces.findIndex(tp => tp.id === placeId);
-  updatedPlace.title = title;
-  updatedPlace.description = description;
+  let place;
 
-  testPlaces[placeIndex] = updatedPlace;
-
-  res.status(200).json({place: updatedPlace});
-}
-
-const deletePlaceById = (req, res, next) => {
-  const placeId = req.params.pid;
-  if (! testPlaces.find(tp => tp.id === placeId) ) {
-    throw new HttpError('No such Place found.', 404);
+  try {
+    place = await Place.findById(placeId);  
+  } catch (error) {
+    return next(new HttpError('Unable to fine due to tech error', 500));
   }
-  testPlaces = testPlaces.filter(p => p.id !== placeId);
 
-  res.status(200).json({places: testPlaces});
+  place.title = title;
+  place.description = description;
+
+  try {
+    await place.save();  
+  } catch (error) {
+    return next(new HttpError('Unable to update due to tech error', 500));
+  }
+
+  res.status(200).json({place: place.toObject({getters: true})});
 }
 
+const deletePlaceById = async (req, res, next) => {
+  const placeId = req.params.pid;
+  
+  let place;
+
+  try {
+    place = await Place.findById(placeId).populate('creator');
+  } catch (error) {
+    return next(new HttpError('Unable to find due to tech error', 500));
+  }
+
+  if (!place) {
+    return next(new HttpError('Unable to find the place that you are trying to delete', 500));
+  }
+
+  try {
+    // await place.remove();
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await place.remove({ session: sess });
+    place.creator.places.pull(place);
+    await place.creator.save({session: sess});
+    await sess.commitTransaction();
+  } catch (error) {
+    return next(new HttpError('Unable to delete due to tech error', 500));
+  }
+
+  res.status(200).json({message: 'Deleted successfully!'});
+}
+
+exports.getAllPlaces = getAllPlaces;
 exports.getPlaceById = getPlaceById;
 exports.getPlacesByUserId = getPlacesByUserId;
 exports.createPlace = createPlace;
 exports.updatePlaceById = updatePlaceById;
 exports.deletePlaceById = deletePlaceById;
-

@@ -1,5 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const url = 'mongodb+srv://MongoMk:IW4mXZqldnD5X9Ge@clustermk-2vmua.gcp.mongodb.net/places?retryWrites=true&w=majority'
 
 const placesRoutes = require('./app/routes/places-routes');
 const usersRoutes = require('./app/routes/users-routes');
@@ -31,4 +33,9 @@ app.use((error, req, res, next) => {
   });
 });
 
-app.listen(3001);
+mongoose.connect(url).then(() => {
+  app.listen(3001);
+  console.log('Connected to DB and running on 3001');
+}).catch((error) => {
+  console.log('Connection to DB failed -- ', error);
+})

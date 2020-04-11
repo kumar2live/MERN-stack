@@ -1,0 +1,16 @@
+const express = require('express');
+const bodyParser = require('body-parser');
+const mongoPractice = require('./app/mongo/mongo');
+const mongoosePractice = require('./app/mongo/mongoose');
+
+const app = express();
+
+app.use(bodyParser.json());
+
+// app.post('/products', mongoPractice.createProduct);
+// app.get('/products', mongoPractice.getProducts);
+
+app.post('/products', mongoosePractice.createProduct);
+app.get('/products', mongoosePractice.getProducts);
+
+app.listen(3002);

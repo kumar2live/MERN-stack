@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { check, validationResult } = require('express-validator');
+const { check } = require('express-validator');
 
 const placesControllers = require('../controllers/places-controller');
+
+router.get('/', placesControllers.getAllPlaces);
 
 router.get('/:pid', placesControllers.getPlaceById);
 
