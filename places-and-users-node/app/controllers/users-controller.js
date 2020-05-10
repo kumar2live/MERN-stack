@@ -55,7 +55,7 @@ const login = async (req, res, next) => {
   if (!identifiedUser || identifiedUser.password !== password) {
     return next(new HttpError('Could not find user, seems to be wrong', 401));
   }
-  res.json({message: 'Logged In!'})
+  res.status(200).json({message: 'Logged In!'})
 };
 
 const getUsers = async (req, res, next) => {

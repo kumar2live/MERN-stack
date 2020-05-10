@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const url = 'mongodb+srv://MongoMk:IW4mXZqldnD5X9Ge@clustermk-2vmua.gcp.mongodb.net/places?retryWrites=true&w=majority'
+const url = 'mongodb+srv://MongoMk:IW4mXZqldnD5X9Ge@clustermk-2vmua.gcp.mongodb.net/mernapp?retryWrites=true&w=majority'
 
 const placesRoutes = require('./app/routes/places-routes');
 const usersRoutes = require('./app/routes/users-routes');
@@ -12,6 +12,17 @@ const app = express();
 
 // parse incoming request
 app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
+
+  next();
+});
 
 // api
 app.use('/api/places', placesRoutes);

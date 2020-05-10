@@ -1,25 +1,44 @@
-import React from 'react';
-import UsersList from '../components/UsersList';
+import React, { useContext, useEffect, useState } from "react";
+import UsersList from "../components/UsersList";
+import Alert from "react-bootstrap/Alert";
 
 const Users = (props) => {
-  const USERS = [
-    {
-      id: 'u1',
-      name: 'John',
-      image: 'https://images.pexels.com/photos/3616232/pexels-photo-3616232.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500',
-      places: 3,
-    },
-    {
-      id: 'u2',
-      name: 'Jane',
-      image: 'https://images.pexels.com/photos/208984/pexels-photo-208984.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500',
-      places: 2,
-    }
-  ];
+  const [isLoading, setIsLoading] = useState(false);
+  const [isThereError, setIsThereError] = useState(null);
+  const [loadedUsers, setLoadedUsers] = useState();
+
+  useEffect(() => {
+    const url = "http://localhost:3001/api/users";
+
+    const fetchUsers = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch(url);
+        const resData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(resData.message);
+        }
+
+        setLoadedUsers(resData.users);
+        setIsLoading(false);
+      } catch (error) {
+        setIsThereError(error.message || "Something went wrong!");
+        setIsLoading(false);
+      }
+    };
+    fetchUsers();
+  }, []);
 
   return (
-    <UsersList items={USERS}/>
+    <React.Fragment>
+      {isThereError && <Alert variant="danger">{isThereError}</Alert>}
+      {isLoading && <Alert variant="dark">Loading...</Alert>}
+
+      {!isLoading && loadedUsers && 
+      <UsersList items={loadedUsers} />}
+    </React.Fragment>
   );
-}
+};
 
 export default Users;
