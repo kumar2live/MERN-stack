@@ -13,11 +13,14 @@ import {
 } from "../../utils/validators";
 import { AppContext } from "../../shared/app-contexts/app-contexts";
 
+import { useAppHttpHook } from "../../hooks/app-http-hook";
+
 const Auth = (props) => {
   const appContext = useContext(AppContext);
   const [isLoginMode, setIsLoginMode] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isThereError, setIsThereError] = useState(null);
+
+  const { isLoading, isThereError, sendRequest, clearError } = useAppHttpHook();
+
   const [formState, inputChangeHandler, setFormData] = useAppFormHook(
     {
       email: { value: "", isValid: false },
@@ -29,62 +32,40 @@ const Auth = (props) => {
   const placeSubmitHandler = async (event) => {
     event.preventDefault();
 
-    setIsLoading(true);
-
     if (isLoginMode) {
+      const url = "http://localhost:3001/api/users/login";
+
       try {
-        const url = "http://localhost:3001/api/users/login";
-        const response = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
+        const responseData = await sendRequest(
+          url,
+          "POST",
+          JSON.stringify({
             email: formState.inputs.email.value,
             password: formState.inputs.password.value,
           }),
-        });
-
-        const resData = await response.json();
-
-        if (!response.ok) {
-          throw new Error(resData.message);
-        }
-
-        setIsLoading(false);
-        appContext.login();
-      } catch (error) {
-        console.log(error);
-        setIsThereError(error.message || "Something went wrong!");
-        setIsLoading(false);
-      }
+          {
+            "Content-Type": "application/json",
+          }
+        );
+        appContext.login(responseData.user.id);
+      } catch (error) {}
     } else {
       try {
         const url = "http://localhost:3001/api/users/signup";
-        const response = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
+        const responseData = await sendRequest(
+          url,
+          "POST",
+          JSON.stringify({
             name: formState.inputs.name.value,
             email: formState.inputs.email.value,
             password: formState.inputs.password.value,
           }),
-        });
-
-        const resData = await response.json();
-        if (!response.ok) {
-          throw new Error(resData.message);
-        }
-        console.log(resData);
-        setIsLoading(false);
-        appContext.login();
-      } catch (error) {
-        console.log(error);
-        setIsThereError(error.message || "Something went wrong!");
-        setIsLoading(false);
-      }
+          {
+            "Content-Type": "application/json",
+          }
+        );
+        appContext.login(responseData.user.id);
+      } catch (error) {}
     }
   };
 
@@ -114,7 +95,11 @@ const Auth = (props) => {
       <div className="d-flex justify-content-center m-2">
         <Card style={{ width: "50%" }}>
           <Card.Body>
-            {isThereError && <Alert variant="danger">{isThereError}</Alert>}
+            {isThereError && (
+              <Alert variant="danger" onClick={clearError}>
+                {isThereError}
+              </Alert>
+            )}
             <Card.Title>Login Here</Card.Title>
             <form className="place-form" onSubmit={placeSubmitHandler}>
               {!isLoginMode && (
@@ -144,8 +129,8 @@ const Auth = (props) => {
                 element="input"
                 id="password"
                 placeholder="Please enter any password"
-                errorText="Please enter a valid password ! at least 5 character(s)"
-                validators={[VALIDATOR_MINLENGTH(5)]}
+                errorText="Please enter a valid password ! at least 6 character(s)"
+                validators={[VALIDATOR_MINLENGTH(6)]}
                 onInput={inputChangeHandler}
               />
 

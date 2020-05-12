@@ -25,6 +25,7 @@ const PlaceList = (props) => {
         {props.items.map((place) => (
           <div className="d-flex justify-content-center" key={place.id}>
             <PlaceItem
+              onDelete={props.onDeletePlace}
               image={place.image}
               name={place.name}
               title={place.title}

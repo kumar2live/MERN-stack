@@ -19,7 +19,7 @@ const NavHeader = (props) => {
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="mr-auto">
             <NavLink className='p-2' to='/' exact>All Users</NavLink>
-            {appContext.isLoggedIn && <NavLink className='p-2' to='/u1/places' exact>My Place</NavLink>}
+            {appContext.isLoggedIn && <NavLink className='p-2' to={`/${appContext.usedIdLoggedIn}/places`} exact>My Place</NavLink>}
             {appContext.isLoggedIn && <NavLink className='p-2' to='/places/new' exact>Add Place</NavLink>}
             {!appContext.isLoggedIn && <NavLink className='p-2' to='/auth' exact>Authenticate</NavLink>}
 

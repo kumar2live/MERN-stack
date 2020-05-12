@@ -1,20 +1,49 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import Alert from "react-bootstrap/Alert";
 
-import PlaceList from '../components/PlaceList';
-import { PLACES } from '../../test-data/test-data';
+import PlaceList from "../components/PlaceList";
 
-const UserPlaces = (props) => {
+import { useAppHttpHook } from "../../hooks/app-http-hook";
+
+const UserPlaces = () => {
   const userID = useParams().userId;
-  const loadedPlaces = PLACES.filter((place) => place.creator === userID);
+  const [loadedPlaces, setLoadedPlaces] = useState();
+  const { isLoading, isThereError, sendRequest, clearError } = useAppHttpHook();
+
+  useEffect(() => {
+    const url = "http://localhost:3001/api/places/user/";
+
+    const fetchUserPlaces = async () => {
+      try {
+        const responseData = await sendRequest(url + userID);
+        console.log(responseData.places);
+        setLoadedPlaces(responseData.places);
+      } catch (error) {}
+    };
+    fetchUserPlaces();
+  }, [sendRequest, userID]);
+
+  const placeDeletedHandler = (deletedPlaceId) => {
+    setLoadedPlaces(prevPlaces => prevPlaces.filter(place => place.id !== deletedPlaceId));
+  }
 
   return (
     <div className="d-flex justify-content-center">
-      <div className='p-2'>
-        <PlaceList items={loadedPlaces} />
-      </div>
+      {isThereError && (
+        <Alert variant="danger" onClick={clearError}>
+          {isThereError}
+        </Alert>
+      )}
+      {isLoading && <Alert variant="dark">Loading...</Alert>}
+
+      {!isLoading && loadedPlaces && (
+        <div className="p-2">
+          <PlaceList items={loadedPlaces} onDeletePlace={placeDeletedHandler}/>
+        </div>
+      )}
     </div>
   );
-}
+};
 
 export default UserPlaces;

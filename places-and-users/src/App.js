@@ -15,13 +15,16 @@ import { AppContext } from './app/shared/app-contexts/app-contexts';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [usedIdLoggedIn, setUsedIdLoggedIn] = useState();
 
-  const login = useCallback(() => {
+  const login = useCallback((uuid) => {
     setIsLoggedIn(true);
+    setUsedIdLoggedIn(uuid);
   }, [])
 
   const logout = useCallback(() => {
     setIsLoggedIn(false);
+    setUsedIdLoggedIn(null);
   }, []);
 
   let routes;
@@ -62,7 +65,7 @@ const App = () => {
   }
 
   return (
-    <AppContext.Provider value={{isLoggedIn: isLoggedIn, login: login, logout: logout}}>
+    <AppContext.Provider value={{isLoggedIn: isLoggedIn, usedIdLoggedIn: usedIdLoggedIn, login: login, logout: logout}}>
       <AppRouter>
         <NavHeader />
         {routes}
