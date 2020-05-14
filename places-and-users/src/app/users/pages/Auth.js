@@ -14,6 +14,7 @@ import {
 import { AppContext } from "../../shared/app-contexts/app-contexts";
 
 import { useAppHttpHook } from "../../hooks/app-http-hook";
+import ImageUploader from "../../shared/Forms/ImageUploader";
 
 const Auth = (props) => {
   const appContext = useContext(AppContext);
@@ -31,6 +32,8 @@ const Auth = (props) => {
 
   const placeSubmitHandler = async (event) => {
     event.preventDefault();
+
+    console.log("formState -- ", formState);
 
     if (isLoginMode) {
       const url = "http://localhost:3001/api/users/login";
@@ -51,19 +54,15 @@ const Auth = (props) => {
       } catch (error) {}
     } else {
       try {
+        const formData = new FormData();
+        formData.append('email', formState.inputs.email.value);
+        formData.append('name', formState.inputs.name.value);
+        formData.append('password', formState.inputs.password.value);
+        formData.append('image', formState.inputs.image.value);
+
         const url = "http://localhost:3001/api/users/signup";
-        const responseData = await sendRequest(
-          url,
-          "POST",
-          JSON.stringify({
-            name: formState.inputs.name.value,
-            email: formState.inputs.email.value,
-            password: formState.inputs.password.value,
-          }),
-          {
-            "Content-Type": "application/json",
-          }
-        );
+        
+        const responseData = await sendRequest(url, "POST", formData);
         appContext.login(responseData.user.id);
       } catch (error) {}
     }
@@ -75,6 +74,7 @@ const Auth = (props) => {
         {
           ...formState.inputs,
           name: undefined,
+          image: undefined,
         },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
@@ -83,6 +83,7 @@ const Auth = (props) => {
         {
           ...formState.inputs,
           name: { value: "", isValid: false },
+          image: { value: null, isValid: false },
         },
         false
       );
@@ -111,6 +112,13 @@ const Auth = (props) => {
                   placeholder="Please enter your name"
                   errorText="Please enter a valid name"
                   validators={[VALIDATOR_REQUIRE()]}
+                  onInput={inputChangeHandler}
+                />
+              )}
+              {!isLoginMode && (
+                <ImageUploader
+                  id="image"
+                  errorText="Please provide an image!"
                   onInput={inputChangeHandler}
                 />
               )}

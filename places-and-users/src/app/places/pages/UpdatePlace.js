@@ -30,7 +30,7 @@ const UpdatePlace = (props) => {
     const fetchUserPlaces = async () => {
       try {
         const responseData = await sendRequest(url + placeIdRef);
-        console.log(responseData.place);
+        // console.log(responseData.place);
         setLoadedPlace(responseData.place);
         setFormData(
           {

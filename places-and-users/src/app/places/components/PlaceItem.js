@@ -50,7 +50,8 @@ const PlaceItem = (props) => {
         <div className="image-container">
           <h3>The Image</h3>
           <img
-            src={props.image}
+            // src={props.image}
+            src={`http://localhost:3001/${props.image}`}
             alt={props.name}
             style={{ width: "100%", height: "100px" }}
           />
@@ -87,7 +88,8 @@ const PlaceItem = (props) => {
       <Card style={{ width: "50%", margin: "1rem" }}>
         <Card.Img
           variant="top"
-          src={props.image}
+          // src={props.image}
+          src={`http://localhost:3001/${props.image}`}
           style={{ maxHeight: "250px" }}
         />
         <Card.Body>
@@ -100,12 +102,12 @@ const PlaceItem = (props) => {
           >
             Show
           </Button>
-          {appContext.usedIdLoggedIn === props.creatorId && (
+          {appContext.usedIdLoggedIn === props.creator && (
             <Button variant="info" className="mr-2">
               <Link to={`/places/${props.id}`}>Edit</Link>
             </Button>
           )}
-          {appContext.usedIdLoggedIn === props.creatorId && (
+          {appContext.usedIdLoggedIn === props.creator && (
             <Button variant="danger" onClick={showDeleteWarningHandler}>
               Delete
             </Button>

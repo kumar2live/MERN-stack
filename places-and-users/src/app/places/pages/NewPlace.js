@@ -9,6 +9,7 @@ import InputComponent from "../../shared/Forms/InputComponent";
 import { useAppFormHook } from "../../app-hooks/appform-hook";
 import { useAppHttpHook } from "../../hooks/app-http-hook";
 import { AppContext } from "../../shared/app-contexts/app-contexts";
+import ImageUploader from "../../shared/Forms/ImageUploader";
 
 const NewPlace = () => {
   const [formState, inputChangeHandler] = useAppFormHook(
@@ -16,6 +17,7 @@ const NewPlace = () => {
       title: { value: "", isValid: false },
       description: { value: "", isValid: false },
       address: { value: "", isValid: false },
+      image: { value: null, isValid: false },
     },
     false
   );
@@ -31,19 +33,14 @@ const NewPlace = () => {
 
     try {
       clearError();
-      await sendRequest(
-        url,
-        "POST",
-        JSON.stringify({
-          title: formState.inputs.title.value,
-          description: formState.inputs.description.value,
-          address: formState.inputs.address.value,
-          creator: appContext.usedIdLoggedIn,
-        }),
-        {
-          "Content-Type": "application/json",
-        }
-      );
+      const formData = new FormData();
+      formData.append("title", formState.inputs.title.value);
+      formData.append("description", formState.inputs.description.value);
+      formData.append("address", formState.inputs.address.value);
+      formData.append("creator", appContext.usedIdLoggedIn);
+      formData.append("image", formState.inputs.image.value);
+
+      await sendRequest(url, "POST", formData);
       history.push("/");
     } catch (error) {}
   };
@@ -85,6 +82,11 @@ const NewPlace = () => {
                 id="address"
                 errorText="Please enter a valid address"
                 validators={[VALIDATOR_REQUIRE()]}
+                onInput={inputChangeHandler}
+              />
+              <ImageUploader
+                id="image"
+                errorText="Please provide an image!"
                 onInput={inputChangeHandler}
               />
 

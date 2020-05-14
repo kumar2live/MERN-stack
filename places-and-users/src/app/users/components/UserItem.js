@@ -13,7 +13,7 @@ const UserItem = (props) => {
           <div className='p-2 user-item'>
             <div className="d-flex justify-content-center">
               <div className='p-2'>
-                <img className='imageStyles' src={props.image} alt={props.name} />
+                <img className='imageStyles' src={`http://localhost:3001/${props.image}`} alt={props.name} />
               </div>
               <div className='p-2 align-self-center'>
                 <h3>{props.name}</h3>

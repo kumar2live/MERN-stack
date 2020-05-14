@@ -4,6 +4,7 @@ const User = require("../mongo/models/user");
 const HttpError = require("../models/http-error");
 
 const signup = async (req, res, next) => {
+  // console.log('req.body -- ', req.body);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log(errors);
@@ -25,8 +26,7 @@ const signup = async (req, res, next) => {
   const createUser = new User({
     name,
     email,
-    image:
-      "https://images.pexels.com/photos/753339/pexels-photo-753339.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500",
+    image: req.file.path,
     password,
     places: [],
   });

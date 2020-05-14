@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+
 const { validationResult } = require("express-validator");
 const Place = require("../mongo/models/place");
 const User = require("../mongo/models/user");
@@ -100,8 +103,7 @@ const createPlace = async (req, res, next) => {
   const createdPlace = new Place({
     title,
     description,
-    image:
-      "https://images.pexels.com/photos/3801030/pexels-photo-3801030.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500",
+    image: req.file.path,
     address,
     location: coordinates,
     creator,
@@ -189,6 +191,8 @@ const deletePlaceById = async (req, res, next) => {
     );
   }
 
+  const imagePath = place.image;
+
   try {
     // await place.remove();
     const sess = await mongoose.startSession();
@@ -199,6 +203,12 @@ const deletePlaceById = async (req, res, next) => {
     await sess.commitTransaction();
   } catch (error) {
     return next(new HttpError("Unable to delete due to tech error", 500));
+  }
+
+  if (imagePath) {
+    fs.unlink(imagePath, (err) => {
+      console.log('dont care about this ', err);
+    });
   }
 
   res.status(200).json({ message: "Deleted successfully!" });
