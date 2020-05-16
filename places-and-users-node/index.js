@@ -4,8 +4,7 @@ const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const url =
-  "mongodb+srv://MongoMk:IW4mXZqldnD5X9Ge@clustermk-2vmua.gcp.mongodb.net/mernapp?retryWrites=true&w=majority";
+const db_url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@clustermk-2vmua.gcp.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 
 const placesRoutes = require("./app/routes/places-routes");
 const usersRoutes = require("./app/routes/users-routes");
@@ -59,7 +58,7 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect(url)
+  .connect(db_url)
   .then(() => {
     app.listen(3001);
     console.log("Connected to DB and running on 3001");

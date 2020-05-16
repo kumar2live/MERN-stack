@@ -1,7 +1,5 @@
 import React from "react";
 import Alert from "react-bootstrap/Alert";
-import Button from "react-bootstrap/Button";
-import { NavLink } from "react-router-dom";
 
 import "./PlaceList.css";
 import PlaceItem from "./PlaceItem";

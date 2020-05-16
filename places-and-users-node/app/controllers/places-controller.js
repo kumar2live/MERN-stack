@@ -59,7 +59,7 @@ const getPlacesByUserId = async (req, res, next) => {
   let places;
   let userWithPlaces;
   try {
-    console.log("userId -- ", userId);
+    // console.log("userId -- ", userId);
     // places = await Place.find({creator: userId});
     userWithPlaces = await User.findById(userId).populate("places");
   } catch (error) {

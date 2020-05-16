@@ -29,7 +29,7 @@ const NewPlace = () => {
   const placeSubmitHandler = async (event) => {
     event.preventDefault();
     // console.log(formState, appContext.usedIdLoggedIn);
-    const url = "http://localhost:3001/api/places";
+    const url = `${process.env.REACT_APP_BACKEND_URL}/places`;
 
     try {
       clearError();

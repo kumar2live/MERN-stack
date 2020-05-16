@@ -12,7 +12,7 @@ const UserPlaces = () => {
   const { isLoading, isThereError, sendRequest, clearError } = useAppHttpHook();
 
   useEffect(() => {
-    const url = "http://localhost:3001/api/places/user/";
+    const url = `${process.env.REACT_APP_BACKEND_URL}/places/user/`;
 
     const fetchUserPlaces = async () => {
       try {

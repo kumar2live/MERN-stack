@@ -22,7 +22,7 @@ const PlaceItem = (props) => {
 
   const confirmDeleteWarningHandler = async () => {
     console.log("DELETING");
-    const url = "http://localhost:3001/api/places/";
+    const url = `${process.env.REACT_APP_BACKEND_URL}/places/`;
 
     // console.log(formState);
 
@@ -53,7 +53,7 @@ const PlaceItem = (props) => {
           <h3>The Image</h3>
           <img
             // src={props.image}
-            src={`http://localhost:3001/${props.image}`}
+            src={`${process.env.REACT_APP_ASSET_URL}/${props.image}`}
             alt={props.name}
             style={{ width: "100%", height: "100px" }}
           />
@@ -91,7 +91,7 @@ const PlaceItem = (props) => {
         <Card.Img
           variant="top"
           // src={props.image}
-          src={`http://localhost:3001/${props.image}`}
+          src={`${process.env.REACT_APP_ASSET_URL}/${props.image}`}
           style={{ maxHeight: "250px" }}
         />
         <Card.Body>

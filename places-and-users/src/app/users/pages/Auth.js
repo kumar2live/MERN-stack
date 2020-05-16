@@ -36,7 +36,7 @@ const Auth = (props) => {
     // console.log("formState -- ", formState);
 
     if (isLoginMode) {
-      const url = "http://localhost:3001/api/users/login";
+      const url = `${process.env.REACT_APP_BACKEND_URL}/users/login`;
 
       try {
         const responseData = await sendRequest(
@@ -60,7 +60,7 @@ const Auth = (props) => {
         formData.append("password", formState.inputs.password.value);
         formData.append("image", formState.inputs.image.value);
 
-        const url = "http://localhost:3001/api/users/signup";
+        const url = `${process.env.REACT_APP_BACKEND_URL}/users/signup`;
 
         const responseData = await sendRequest(url, "POST", formData);
         appContext.login(responseData.userId, responseData.token);

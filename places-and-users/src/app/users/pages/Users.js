@@ -8,7 +8,7 @@ const Users = () => {
   const { isLoading, isThereError, sendRequest, clearError } = useAppHttpHook();
 
   useEffect(() => {
-    const url = "http://localhost:3001/api/users";
+    const url = `${process.env.REACT_APP_BACKEND_URL}/users`;
 
     const fetchUsers = async () => {
       try {

@@ -25,7 +25,7 @@ const UpdatePlace = (props) => {
   );
 
   useEffect(() => {
-    const url = "http://localhost:3001/api/places/";
+    const url = `${process.env.REACT_APP_BACKEND_URL}/places/`;
 
     const fetchUserPlaces = async () => {
       try {
@@ -49,7 +49,7 @@ const UpdatePlace = (props) => {
 
   const placeUpdateHandler = async (event) => {
     event.preventDefault();
-    const url = "http://localhost:3001/api/places/";
+    const url = `${process.env.REACT_APP_BACKEND_URL}/places/`;
 
     // console.log(formState);
 

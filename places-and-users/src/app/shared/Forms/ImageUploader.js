@@ -2,8 +2,6 @@ import React, { useRef, useState, useEffect } from "react";
 import "./ImageUploader.css";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
-import Alert from "react-bootstrap/Alert";
-import Form from "react-bootstrap/Form";
 
 const ImageUploader = (props) => {
   const filePickerRef = useRef();
