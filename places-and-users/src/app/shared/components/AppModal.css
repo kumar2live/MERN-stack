@@ -12,17 +12,17 @@
 
 .appmodal-header {
   width: 100%;
-  padding: .5rem;
+  padding: 0.5rem;
   background-color: #333;
   color: aliceblue;
 }
 
 .appmodal-content {
-  padding: .5rem;
+  padding: 0.5rem;
 }
 
 .appmodal-footer {
-  padding: .5rem;
+  padding: 0.5rem;
 }
 
 .appmodal-enter {

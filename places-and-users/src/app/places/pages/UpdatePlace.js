@@ -64,6 +64,7 @@ const UpdatePlace = (props) => {
         }),
         {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${appContext.token}`
         }
       );
       history.push(`/${appContext.usedIdLoggedIn}/places`);

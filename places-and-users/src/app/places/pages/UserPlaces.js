@@ -17,7 +17,7 @@ const UserPlaces = () => {
     const fetchUserPlaces = async () => {
       try {
         const responseData = await sendRequest(url + userID);
-        console.log(responseData.places);
+        // console.log(responseData.places);
         setLoadedPlaces(responseData.places);
       } catch (error) {}
     };
@@ -25,8 +25,10 @@ const UserPlaces = () => {
   }, [sendRequest, userID]);
 
   const placeDeletedHandler = (deletedPlaceId) => {
-    setLoadedPlaces(prevPlaces => prevPlaces.filter(place => place.id !== deletedPlaceId));
-  }
+    setLoadedPlaces((prevPlaces) =>
+      prevPlaces.filter((place) => place.id !== deletedPlaceId)
+    );
+  };
 
   return (
     <div className="d-flex justify-content-center">
@@ -39,7 +41,7 @@ const UserPlaces = () => {
 
       {!isLoading && loadedPlaces && (
         <div className="p-2">
-          <PlaceList items={loadedPlaces} onDeletePlace={placeDeletedHandler}/>
+          <PlaceList items={loadedPlaces} onDeletePlace={placeDeletedHandler} />
         </div>
       )}
     </div>

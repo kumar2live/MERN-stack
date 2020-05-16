@@ -37,10 +37,11 @@ const NewPlace = () => {
       formData.append("title", formState.inputs.title.value);
       formData.append("description", formState.inputs.description.value);
       formData.append("address", formState.inputs.address.value);
-      formData.append("creator", appContext.usedIdLoggedIn);
       formData.append("image", formState.inputs.image.value);
 
-      await sendRequest(url, "POST", formData);
+      await sendRequest(url, "POST", formData, {
+        Authorization: `Bearer ${appContext.token}`
+      });
       history.push("/");
     } catch (error) {}
   };

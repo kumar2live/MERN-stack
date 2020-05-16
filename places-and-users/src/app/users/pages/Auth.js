@@ -33,7 +33,7 @@ const Auth = (props) => {
   const placeSubmitHandler = async (event) => {
     event.preventDefault();
 
-    console.log("formState -- ", formState);
+    // console.log("formState -- ", formState);
 
     if (isLoginMode) {
       const url = "http://localhost:3001/api/users/login";
@@ -50,20 +50,20 @@ const Auth = (props) => {
             "Content-Type": "application/json",
           }
         );
-        appContext.login(responseData.user.id);
+        appContext.login(responseData.userId, responseData.token);
       } catch (error) {}
     } else {
       try {
         const formData = new FormData();
-        formData.append('email', formState.inputs.email.value);
-        formData.append('name', formState.inputs.name.value);
-        formData.append('password', formState.inputs.password.value);
-        formData.append('image', formState.inputs.image.value);
+        formData.append("email", formState.inputs.email.value);
+        formData.append("name", formState.inputs.name.value);
+        formData.append("password", formState.inputs.password.value);
+        formData.append("image", formState.inputs.image.value);
 
         const url = "http://localhost:3001/api/users/signup";
-        
+
         const responseData = await sendRequest(url, "POST", formData);
-        appContext.login(responseData.user.id);
+        appContext.login(responseData.userId, responseData.token);
       } catch (error) {}
     }
   };

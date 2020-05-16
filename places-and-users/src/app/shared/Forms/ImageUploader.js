@@ -58,7 +58,11 @@ const ImageUploader = (props) => {
             onChange={pickedImageHandler}
           />
 
-          <div className="preview">{previewUrl && <img className='h-100 w-100' alt="preview" src={previewUrl}/>}</div>
+          <div className="preview">
+            {previewUrl && (
+              <img className="h-100 w-100" alt="preview" src={previewUrl} />
+            )}
+          </div>
         </Card.Body>
         <Button
           className="m-2"

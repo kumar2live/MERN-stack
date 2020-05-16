@@ -1,18 +1,16 @@
-import React from 'react';
-import Alert from 'react-bootstrap/Alert';
-import Button from 'react-bootstrap/Button';
-import { NavLink } from 'react-router-dom';
+import React from "react";
+import Alert from "react-bootstrap/Alert";
+import Button from "react-bootstrap/Button";
+import { NavLink } from "react-router-dom";
 
-import './PlaceList.css';
-import PlaceItem from './PlaceItem';
+import "./PlaceList.css";
+import PlaceItem from "./PlaceItem";
 
 const PlaceList = (props) => {
   if (props.items.length === 0) {
     return (
       <React.Fragment>
-        <Alert variant='warning'>
-          No Places found.
-        </Alert>
+        <Alert variant="warning">No Places found.</Alert>
         {/* <NavLink className='p-2' to='/' exact>All Users</NavLink>
         <Button to='/places/new'>Share Place</Button> */}
       </React.Fragment>
@@ -32,13 +30,13 @@ const PlaceList = (props) => {
               description={place.description}
               creator={place.creator}
               address={place.address}
-              id={place.id}/>
+              id={place.id}
+            />
           </div>
-          )
-        )}
+        ))}
       </div>
     </React.Fragment>
   );
-}
+};
 
 export default PlaceList;

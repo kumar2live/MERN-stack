@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -32,7 +32,10 @@ app.use((req, res, next) => {
 app.use("/api/places", placesRoutes);
 app.use("/api/users", usersRoutes);
 
-app.use('/app/uploads/images', express.static(path.join('app', 'uploads', 'images')));
+app.use(
+  "/app/uploads/images",
+  express.static(path.join("app", "uploads", "images"))
+);
 
 app.use((req, res, next) => {
   const error = new HttpError("Could not find this route", 404);
@@ -42,7 +45,7 @@ app.use((req, res, next) => {
 app.use((error, req, res, next) => {
   if (req.file) {
     fs.unlink(req.file.path, (err) => {
-      console.log('dont care about this ', err);
+      console.log("dont care about this ", err);
     });
   }
   if (res.headerSent) {

@@ -28,7 +28,9 @@ const PlaceItem = (props) => {
 
     try {
       clearError();
-      await sendRequest(url + props.id, "DELETE");
+      await sendRequest(url + props.id, "DELETE", null, {
+        Authorization: `Bearer ${appContext.token}`,
+      });
       props.onDelete(props.id);
     } catch (error) {}
 

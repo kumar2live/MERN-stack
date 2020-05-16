@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 const { validationResult } = require("express-validator");
 const Place = require("../mongo/models/place");
@@ -106,13 +106,13 @@ const createPlace = async (req, res, next) => {
     image: req.file.path,
     address,
     location: coordinates,
-    creator,
+    creator: req.userData.userId,
   });
 
   // console.log('creator -- ', creator);
   let user;
   try {
-    user = await User.findById(creator);
+    user = await User.findById(req.userData.userId);
   } catch (error) {
     return next(
       new HttpError("Error in finding the user, Please try again", 500)
@@ -159,6 +159,12 @@ const updatePlaceById = async (req, res, next) => {
     return next(new HttpError("Unable to fine due to tech error", 500));
   }
 
+  if (place.creator.toString() !== req.userData.userId) {
+    return next(
+      new HttpError("You're not allowed to perform this action!", 401)
+    );
+  }
+
   place.title = title;
   place.description = description;
 
@@ -191,6 +197,12 @@ const deletePlaceById = async (req, res, next) => {
     );
   }
 
+  if (place.creator.id !== req.userData.userId) {
+    return next(
+      new HttpError("You're not allowed to perform this action!", 401)
+    );
+  }
+
   const imagePath = place.image;
 
   try {
@@ -207,7 +219,7 @@ const deletePlaceById = async (req, res, next) => {
 
   if (imagePath) {
     fs.unlink(imagePath, (err) => {
-      console.log('dont care about this ', err);
+      console.log("dont care about this ", err);
     });
   }
 

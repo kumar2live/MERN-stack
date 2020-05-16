@@ -21,7 +21,11 @@ const Users = () => {
 
   return (
     <React.Fragment>
-      {isThereError && <Alert variant="danger" onClick={clearError}>{isThereError}</Alert>}
+      {isThereError && (
+        <Alert variant="danger" onClick={clearError}>
+          {isThereError}
+        </Alert>
+      )}
       {isLoading && <Alert variant="dark">Loading...</Alert>}
 
       {!isLoading && loadedUsers && <UsersList items={loadedUsers} />}
